@@ -73,4 +73,24 @@ class RetinaFace:
             raise NotImplementedError()
 
     def __call__(self, images):
-        return self.detect(images)
+
+        det = self.detect(images)
+
+        resp = {}
+        for idx, face in enumerate(det):
+
+            label = 'face_'+str(idx+1)
+            resp[label] = {}
+            resp[label]["score"] = face[2]
+
+            resp[label]["facial_area"] = list(face[0].astype(int))
+            landmarks = face[1]
+
+            resp[label]["landmarks"] = {}
+            resp[label]["landmarks"]["right_eye"] = list(landmarks[idx][0])
+            resp[label]["landmarks"]["left_eye"] = list(landmarks[idx][1])
+            resp[label]["landmarks"]["nose"] = list(landmarks[idx][2])
+            resp[label]["landmarks"]["mouth_right"] = list(landmarks[idx][3])
+            resp[label]["landmarks"]["mouth_left"] = list(landmarks[idx][4])
+
+        return resp
